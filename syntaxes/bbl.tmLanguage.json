@@ -1,0 +1,78 @@
+{
+  "scopeName": "source.bbl",
+  "name": "BBL",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#shebang" },
+    { "include": "#string" },
+    { "include": "#binary-literal" },
+    { "include": "#number" },
+    { "include": "#constant" },
+    { "include": "#keyword" },
+    { "include": "#type-constructor" },
+    { "include": "#builtin-function" },
+    { "include": "#math-function" },
+    { "include": "#method-call" },
+    { "include": "#variable-binding" },
+    { "include": "#operator" }
+  ],
+  "repository": {
+    "comment": {
+      "match": "//.*$",
+      "name": "comment.line.double-slash.bbl"
+    },
+    "shebang": {
+      "match": "^#!.*$",
+      "name": "comment.line.shebang.bbl"
+    },
+    "string": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.bbl",
+      "patterns": [{
+        "match": "\\\\[\"\\\\ntr]",
+        "name": "constant.character.escape.bbl"
+      }]
+    },
+    "binary-literal": {
+      "match": "0[bz][0-9]+:",
+      "name": "constant.other.binary.bbl"
+    },
+    "number": {
+      "match": "-?[0-9]+(\\.[0-9]+)?",
+      "name": "constant.numeric.bbl"
+    },
+    "constant": {
+      "match": "(?<=[\\s(])(true|false|null)(?=[\\s)]|$)",
+      "name": "constant.language.bbl"
+    },
+    "keyword": {
+      "match": "(?<=\\()(if|loop|each|fn|do|with|try|catch|break|continue|and|or|not|=)(?=[\\s)])",
+      "name": "keyword.control.bbl"
+    },
+    "type-constructor": {
+      "match": "(?<=\\()(vector|table|struct|binary|int|sizeof|exec|execfile)(?=[\\s)])",
+      "name": "keyword.other.bbl"
+    },
+    "builtin-function": {
+      "match": "(?<=\\()(print|str|typeof|float|fmt|compress|decompress|filebytes|fopen|getenv|setenv|clock|time|sleep|exit|getcwd|chdir|mkdir|remove|rename|execute|glob|spawn|recv|post)(?=[\\s)])",
+      "name": "support.function.bbl"
+    },
+    "math-function": {
+      "match": "(?<=\\()(sin|cos|tan|asin|acos|atan|atan2|sqrt|abs|floor|ceil|min|max|pow|log|log2|log10|exp)(?=[\\s)])",
+      "name": "support.function.math.bbl"
+    },
+    "method-call": {
+      "match": ":[a-zA-Z_][a-zA-Z0-9_-]*",
+      "name": "entity.name.function.method.bbl"
+    },
+    "variable-binding": {
+      "match": "(?<=\\(=\\s)([a-zA-Z_][a-zA-Z0-9_-]*)",
+      "captures": { "1": { "name": "variable.other.bbl" } }
+    },
+    "operator": {
+      "match": "(?<=\\()([+\\-*/%<>=!]+|band|bor|bxor|bnot|shl|shr)(?=[\\s)])",
+      "name": "keyword.operator.bbl"
+    }
+  }
+}

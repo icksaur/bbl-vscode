@@ -1,0 +1,40 @@
+{
+  "name": "bbl-language",
+  "displayName": "BBL Language",
+  "description": "Language support for BBL (Basic Binary Lisp)",
+  "version": "0.0.1",
+  "publisher": "icksaur",
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Programming Languages"],
+  "activationEvents": ["onLanguage:bbl"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "bbl",
+      "aliases": ["BBL", "Basic Binary Lisp"],
+      "extensions": [".bbl"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "bbl",
+      "scopeName": "source.bbl",
+      "path": "./syntaxes/bbl.tmLanguage.json"
+    }],
+    "configuration": {
+      "title": "BBL",
+      "properties": {
+        "bbl.serverPath": {
+          "type": "string",
+          "default": "bbl",
+          "description": "Path to the bbl binary (must support --lsp)"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^2.22.0"
+  }
+}
