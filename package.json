@@ -4,6 +4,8 @@
   "description": "Language support for BBL (Basic Binary Lisp)",
   "version": "0.0.1",
   "publisher": "icksaur",
+  "repository": { "type": "git", "url": "https://github.com/icksaur/bbl-vscode" },
+  "license": "MIT",
   "engines": { "vscode": "^1.75.0" },
   "categories": ["Programming Languages"],
   "activationEvents": ["onLanguage:bbl"],
