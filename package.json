@@ -2,13 +2,13 @@
   "name": "bbl-language",
   "displayName": "BBL Language",
   "description": "Language support for BBL (Basic Binary Lisp)",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "icksaur",
   "repository": { "type": "git", "url": "https://github.com/icksaur/bbl-vscode" },
   "license": "MIT",
   "engines": { "vscode": "^1.75.0" },
-  "categories": ["Programming Languages"],
-  "activationEvents": ["onLanguage:bbl"],
+  "categories": ["Programming Languages", "Debuggers"],
+  "activationEvents": ["onLanguage:bbl", "onDebugResolve:bbl"],
   "main": "./src/extension.js",
   "contributes": {
     "languages": [{
@@ -21,6 +21,61 @@
       "language": "bbl",
       "scopeName": "source.bbl",
       "path": "./syntaxes/bbl.tmLanguage.json"
+    }],
+    "debuggers": [{
+      "type": "bbl",
+      "label": "BBL Debug",
+      "languages": ["bbl"],
+      "configurationAttributes": {
+        "launch": {
+          "required": ["program"],
+          "properties": {
+            "program": {
+              "type": "string",
+              "description": "Path to the BBL script to debug",
+              "default": "${file}"
+            },
+            "port": {
+              "type": "number",
+              "description": "DAP server port",
+              "default": 7889
+            }
+          }
+        },
+        "attach": {
+          "required": ["port"],
+          "properties": {
+            "port": {
+              "type": "number",
+              "description": "DAP server port to attach to",
+              "default": 7889
+            }
+          }
+        }
+      },
+      "configurationSnippets": [
+        {
+          "label": "BBL: Launch",
+          "description": "Launch and debug a BBL script",
+          "body": {
+            "type": "bbl",
+            "request": "launch",
+            "name": "Debug BBL Script",
+            "program": "^\"\\${file}\"",
+            "port": 7889
+          }
+        },
+        {
+          "label": "BBL: Attach",
+          "description": "Attach to a running BBL debug server",
+          "body": {
+            "type": "bbl",
+            "request": "attach",
+            "name": "Attach to BBL",
+            "port": 7889
+          }
+        }
+      ]
     }],
     "commands": [
       { "command": "bbl.evalSelection", "title": "BBL: Eval Selection" },
@@ -44,6 +99,11 @@
           "type": "number",
           "default": 7888,
           "description": "Default nREPL port for manual connection"
+        },
+        "bbl.debugPort": {
+          "type": "number",
+          "default": 7889,
+          "description": "Default DAP debug server port"
         }
       }
     }

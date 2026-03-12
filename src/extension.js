@@ -3,6 +3,7 @@ const vscode = require('vscode');
 const net = require('net');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 let client;
 let nreplSocket = null;
@@ -11,6 +12,36 @@ let nreplStatus = null;
 let nreplPendingId = 0;
 let nreplPending = new Map();
 let nreplBuffer = '';
+
+class BblDebugAdapterFactory {
+    createDebugAdapterDescriptor(session) {
+        const config = session.configuration;
+        if (config.request === 'attach') {
+            return new vscode.DebugAdapterServer(config.port || 7889);
+        }
+        const bblPath = vscode.workspace.getConfiguration('bbl').get('serverPath', 'bbl');
+        const port = config.port || 7889;
+        const program = config.program;
+        const child = spawn(bblPath, ['--dap', String(port), program], {
+            stdio: ['ignore', 'pipe', 'pipe']
+        });
+        child.stderr.on('data', d => {
+            const msg = d.toString();
+            if (msg.includes('listening')) {
+                vscode.window.setStatusBarMessage('BBL debug server started on port ' + port, 3000);
+            }
+        });
+        child.on('exit', () => {
+            vscode.debug.stopDebugging(session);
+        });
+        session._bblChild = child;
+        return new Promise(resolve => {
+            setTimeout(() => resolve(new vscode.DebugAdapterServer(port)), 500);
+        });
+    }
+
+    dispose() {}
+}
 
 function activate(context) {
     const config = vscode.workspace.getConfiguration('bbl');
@@ -42,6 +73,21 @@ function activate(context) {
         vscode.commands.registerCommand('bbl.evalFile', evalFile),
         vscode.commands.registerCommand('bbl.nreplConnect', nreplConnect),
         vscode.commands.registerCommand('bbl.nreplDisconnect', nreplDisconnect)
+    );
+
+    const debugFactory = new BblDebugAdapterFactory();
+    context.subscriptions.push(
+        vscode.debug.registerDebugAdapterDescriptorFactory('bbl', debugFactory),
+        debugFactory
+    );
+
+    context.subscriptions.push(
+        vscode.debug.onDidTerminateDebugSession(session => {
+            if (session._bblChild) {
+                session._bblChild.kill();
+                session._bblChild = null;
+            }
+        })
     );
 
     tryAutoConnect();
