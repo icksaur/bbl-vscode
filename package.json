@@ -2,7 +2,7 @@
   "name": "bbl-language",
   "displayName": "BBL Language",
   "description": "Language support for BBL (Basic Binary Lisp)",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "icksaur",
   "repository": { "type": "git", "url": "https://github.com/icksaur/bbl-vscode" },
   "license": "MIT",
@@ -22,6 +22,16 @@
       "scopeName": "source.bbl",
       "path": "./syntaxes/bbl.tmLanguage.json"
     }],
+    "commands": [
+      { "command": "bbl.evalSelection", "title": "BBL: Eval Selection" },
+      { "command": "bbl.evalFile", "title": "BBL: Eval File" },
+      { "command": "bbl.nreplConnect", "title": "BBL: Connect to nREPL" },
+      { "command": "bbl.nreplDisconnect", "title": "BBL: Disconnect nREPL" }
+    ],
+    "keybindings": [
+      { "command": "bbl.evalSelection", "key": "ctrl+enter", "when": "editorLangId == bbl" },
+      { "command": "bbl.evalFile", "key": "ctrl+shift+enter", "when": "editorLangId == bbl" }
+    ],
     "configuration": {
       "title": "BBL",
       "properties": {
@@ -29,6 +39,11 @@
           "type": "string",
           "default": "bbl",
           "description": "Path to the bbl binary (must support --lsp)"
+        },
+        "bbl.nreplPort": {
+          "type": "number",
+          "default": 7888,
+          "description": "Default nREPL port for manual connection"
         }
       }
     }
